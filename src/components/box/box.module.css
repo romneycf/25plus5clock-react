@@ -1,0 +1,13 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 35vw;
+    height: 20vh;
+    color: var(--color-primary);
+    background-color: var(--color-uber-primary);
+    box-shadow: 2px 2px 15px 0px var(--border-shadow);
+    border-radius: var(--border-radius);
+    border: 16px solid var(--border-color);
+}
+

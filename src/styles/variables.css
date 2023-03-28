@@ -1,0 +1,22 @@
+:root {
+    --background-color: ##ffff;
+    --border-color: #949494;
+    --border-shadow: #504e4e;
+
+    --color-text-primary: #b3b3b3;
+    
+    --color-primary: #fd0200;
+    --color-dark-primary: #520d0d;
+    --color-uber-primary: #2b0b0b;
+    
+    --color-secondary: #996505;
+    --color-tertirary: #744c4b;
+    --color-quarternary: #413c44;
+  
+    --border-radius: 6px;
+  
+    --padding-xs: 4px 6px;
+    --padding-md: 8px 12px;
+    --padding-lg: 12px 16px;
+  }
+  
