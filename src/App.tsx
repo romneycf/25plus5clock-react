@@ -3,82 +3,72 @@ import Box from "./components/box/box";
 import Title from "./components/title/title";
 import Labelbtn from "./components/labelbtn/labelbtn";
 import { useEffect, useRef, useState } from "react";
-import { useTimer } from "react-timer-hook";
-
-function MyTimer({ expiryTimestamp }) {
-  const {
-    seconds,
-    minutes,
-    hours,
-    days,
-    isRunning,
-    start,
-    pause,
-    resume,
-    restart,
-  } = useTimer({
-    expiryTimestamp,
-    onExpire: () => console.warn("onExpire called"),
-  });
-
-  return (
-    <div style={{ textAlign: "center" }}>
-      <h1>react-timer-hook </h1>
-      <p>Timer Demo</p>
-      <div style={{ fontSize: "100px" }}>
-        <span>{days}</span>:<span>{hours}</span>:<span>{minutes}</span>:
-        <span>{seconds}</span>
-      </div>
-      <p>{isRunning ? "Running" : "Not running"}</p>
-      <button onClick={start}>Start</button>
-      <button onClick={pause}>Pause</button>
-      <button onClick={resume}>Resume</button>
-      <button
-        onClick={() => {
-          // Restarts to 5 minutes timer
-          const time = new Date();
-          time.setSeconds(time.getSeconds() + 300);
-          restart(time);
-        }}
-      >
-        Restart
-      </button>
-    </div>
-  );
-}
 
 function App() {
-  const time = new Date();
-  time.setSeconds(time.getSeconds() + 600); // 10 minutes timer
-
   const [session, setSession] = useState({
     lenght: 25,
     break: 5,
+    minutes: 25,
+    seconds: 0,
     label: "Session",
+    isRunning: false,
   });
+
+  const trueMinutes =
+    session.minutes < 10 ? "0" + session.minutes : session.minutes;
+  const trueSeconds =
+    session.seconds < 10 ? "0" + session.seconds : session.seconds;
 
   function handleLenght(operator: "decrement" | "increment") {
     if (operator === "increment") {
       if (session.lenght >= 60) return false;
-      setSession((values) => ({ ...values, lenght: session.lenght + 1 }));
+      setSession((values) => ({
+        ...values,
+        lenght: session.lenght++,
+        minutes: session.minutes++,
+      }));
     }
 
     if (operator === "decrement") {
       if (session.lenght <= 1) return false;
-      setSession((values) => ({ ...values, lenght: session.lenght - 1 }));
+      setSession((values) => ({
+        ...values,
+        lenght: session.lenght--,
+        minutes: session.minutes--,
+      }));
     }
   }
 
   function handleBreak(operator: "decrement" | "increment") {
     if (operator === "increment") {
       if (session.break >= 60) return false;
-      setSession((values) => ({ ...values, break: session.break + 1 }));
+      setSession((values) => ({
+        ...values,
+        break: session.break + 1,
+      }));
     }
 
     if (operator === "decrement") {
       if (session.break <= 1) return false;
-      setSession((values) => ({ ...values, break: session.break - 1 }));
+      setSession((values) => ({
+        ...values,
+        break: session.break - 1,
+      }));
     }
+  }
+
+  function pause() {
+    setSession((values) => ({
+      ...values,
+      isRunning: false,
+    }));
+  }
+
+  function resume() {
+    setSession((values) => ({
+      ...values,
+      isRunning: true,
+    }));
   }
 
   return (
@@ -105,9 +95,25 @@ function App() {
             </div>
           </div>
           <div className="controller-wrapper">
-            <label id="timer-label">Session</label>
+            <p>{session.isRunning ? "Running" : "Not running"}</p>
+            <label id="timer-label">{session.label}</label>
+            <span id="time-left">
+              {trueMinutes}:{trueSeconds}
+            </span>
             <div>
-              <MyTimer expiryTimestamp={time} />
+              <Labelbtn
+                id="start_stop"
+                onClick={session.isRunning ? pause : resume}
+              >
+                <i
+                  className={
+                    !session.isRunning ? "fa fa-forward-step" : "fa fa-pause"
+                  }
+                ></i>
+              </Labelbtn>
+              <Labelbtn id="session-decrement">
+                <i className="fa fa-refresh"></i>
+              </Labelbtn>
             </div>
           </div>
           <div className="controller-wrapper">
@@ -119,7 +125,7 @@ function App() {
               >
                 <i className="fa fa-arrow-down"></i>
               </Labelbtn>
-              <label id="session-length">{session.lenght}</label>
+              <label id="session-length">{trueMinutes}</label>
               <Labelbtn
                 id="session-increment"
                 onClick={() => handleLenght("increment")}
@@ -135,3 +141,69 @@ function App() {
 }
 
 export default App;
+/*
+import { useTimer } from 'react-timer-hook';
+import React, { useState, useEffect } from 'react';
+import Modal from '../Modal/Modal';
+import Button from '../Button/Button';
+import { theme } from '../../styles/theme';
+import RenovacaoJwt from './ModalJwt';
+
+const { rbmWhite, dangerColor } = theme.colors;
+
+const Timer = ({ expiryTimestamp }) => {
+  const [logout, setLogout] = useState(false);
+  const [renovation, setRenovation] = useState(false);
+
+
+   const { seconds, minutes, hours } = useTimer({
+    expiryTimestamp,
+    onExpire: () => {
+      setRenovation(false);
+      setLogout(true);
+    },
+  });
+
+  const trueSeconds = seconds < 10 ? '0' + seconds : seconds;
+  const trueMinutes = minutes < 10 ? '0' + minutes : minutes;
+  const trueHours = hours < 10 ? '0' + hours : hours;
+ 
+
+  useEffect(() => {
+   hours == 0 && minutes == 0 && seconds == 59 && setRenovation(true);
+  }, [minutes]);
+
+  return (
+    <div style={{ textAlign: 'center',width:'100%' }}>
+      <span>{trueHours + ":" + trueMinutes + ':' + trueSeconds}</span>
+      <RenovacaoJwt open={renovation} close={() => setRenovation(false)} />
+      <Modal  open={logout} close={true} >
+        <>
+          <div style={{ padding: '1rem' }}>
+            <h1>{'SUA SESSÃO FOI EXPIRADA'}</h1>
+          </div>
+          <div style={{ padding: '1rem' }}>
+            <Button
+              backgroundColor={dangerColor}
+              width={'13.792vw'}
+              height={'3.125vw'}
+              hoverBGColor={dangerColor}
+              hoverColor={rbmWhite}
+              color={rbmWhite}
+              onClick={() => {
+                window.location = '/login';
+                localStorage.clear();
+              }}
+              roleName={'button-confirmar-negar'}
+            >
+              <span>OK</span>
+            </Button>
+          </div>
+        </>
+      </Modal>
+    </div>
+  );
+};
+
+export default Timer;
+*/
