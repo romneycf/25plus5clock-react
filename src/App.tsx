@@ -45,7 +45,6 @@ function App() {
       }, 1000);
       return () => clearInterval(interval);
     } else if (displayTime === 0) {
-      console.log("acabou");
       if (audioElement.current) {
         audioElement.current.play();
         audioElement.current.currentTime = 0;
