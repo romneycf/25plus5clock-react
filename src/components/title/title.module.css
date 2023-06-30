@@ -1,8 +1,0 @@
-
-.title{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: var(--color-primary);
-    font-size: 18px;    
-}

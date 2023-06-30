@@ -1,5 +1,4 @@
 import "./App.css";
-import Title from "./components/title/title";
 import Labelbtn from "./components/labelbtn/labelbtn";
 import { useEffect, useRef, useState } from "react";
 
@@ -9,7 +8,7 @@ function App() {
   const [displayTime, setDisplayTime] = useState(1500);
   const [isActive, setActive] = useState(false);
   const [label, setLabel] = useState("Session");
-  const audioElement = useRef(null);
+  const audioElement = useRef<HTMLAudioElement>(null);
 
   function maskTime(time: number) {
     let minutes = Math.floor(time / 60);
@@ -47,10 +46,11 @@ function App() {
       return () => clearInterval(interval);
     } else if (displayTime === 0) {
       console.log("acabou");
-      //audioElement.current.play();
-      //audioElement.current.currentTime = 0;
+      if (audioElement.current) {
+        audioElement.current.play();
+        audioElement.current.currentTime = 0;
+      }
 
-      //    setTimeout(() => {
       if (label === "Session") {
         setDisplayTime(breakTime * 60);
         setLabel("Break");
@@ -69,7 +69,7 @@ function App() {
     setLabel("Session");
     setActive(false);
     clearInterval(undefined);
-    //audioElement.current.load();
+    audioElement.current?.load();
   }
 
   return (
@@ -85,7 +85,7 @@ function App() {
               >
                 <i className="fa fa-arrow-down"></i>
               </Labelbtn>
-              <label id="break-length">{`${breakTime}`}</label>
+              <label id="break-length">{breakTime}</label>
               <Labelbtn
                 id="break-increment"
                 onClick={() => changeTime(1, "Break")}
@@ -128,6 +128,11 @@ function App() {
           </div>
         </div>
         <span className="title">25 plus 5 Clock - by R. Freire</span>
+        <audio
+          id="beep"
+          src="https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav"
+          ref={audioElement}
+        />
       </div>
     </div>
   );
